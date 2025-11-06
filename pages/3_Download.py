@@ -3,10 +3,10 @@ import pdfkit
 import tempfile
 import os
 
-# Configuration de la page (utilisez un emoji ou une URL pour page_icon)
+# Configuration de la page
 st.set_page_config(
     page_title="FactuBot - Download Invoice",
-    page_icon="📄",  # Utilisez un emoji ou une URL
+    page_icon="📄",
     layout="centered"
 )
 
@@ -32,8 +32,8 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Chemin absolu vers l'icône
-icon_path = r"C:\Users\PC\ML\factubot\download.jpg"
+# Chemin relatif vers l'icône
+icon_path = "assets/download.jpg"
 
 # Vérifiez que le fichier existe
 if not os.path.exists(icon_path):
@@ -58,10 +58,15 @@ else:
 
     # Générer et télécharger le PDF
     if st.button("Download Invoice as PDF"):
-        config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+        # Configuration de pdfkit (uniquement pour Windows local)
+        config = None
+        if os.name == 'nt':  # Si le système est Windows
+            config = pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe")
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_pdf:
             pdfkit.from_string(st.session_state.invoice_html, tmp_pdf.name, configuration=config)
             tmp_pdf_path = tmp_pdf.name
+
         with open(tmp_pdf_path, "rb") as f:
             st.download_button(
                 label="Download PDF",
@@ -69,6 +74,7 @@ else:
                 file_name="invoice.pdf",
                 mime="application/pdf"
             )
+
         os.unlink(tmp_pdf_path)
 
     # Bouton pour revenir à la page précédente
