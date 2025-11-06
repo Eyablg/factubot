@@ -23,9 +23,9 @@ def set_background_image(image_path):
         unsafe_allow_html=True
     )
 
-# Paths for background and icon images
-background_image_path = r"C:\Users\PC\ML\factubot\background1.jpg"
-icon_path = r"C:\Users\PC\ML\factubot\icon1.jpg"
+# Paths for background and icon images (chemins relatifs)
+background_image_path = "assets/background1.jpg"
+icon_path = "assets/icon1.jpg"
 
 # Set background image
 set_background_image(background_image_path)
