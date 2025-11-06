@@ -6,16 +6,24 @@ import tempfile
 from PIL import Image
 import os
 import base64
+import platform
 
-# Set the Tesseract path (pour Windows local uniquement)
-if os.name == 'nt':  # Si le système est Windows
-    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
-# Sur Streamlit Cloud, Tesseract est installé via config.toml, donc pas besoin de chemin absolu
+# Configuration de Tesseract OCR selon l'environnement
+# Pour Windows local uniquement (commenté pour Streamlit Cloud)
+# if platform.system() == "Windows":
+#     pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
 
 # Function to encode an image to base64
 def img_to_base64(image_path):
-    with open(image_path, "rb") as img_file:
-        return base64.b64encode(img_file.read()).decode("utf-8")
+    try:
+        with open(image_path, "rb") as img_file:
+            return base64.b64encode(img_file.read()).decode("utf-8")
+    except FileNotFoundError:
+        st.error(f"Fichier image introuvable : {image_path}")
+        st.stop()
+    except Exception as e:
+        st.error(f"Erreur lors du chargement de l'image : {e}")
+        st.stop()
 
 # Set paths for icons (chemins relatifs)
 invoice_icon_path = "assets/invoice.jpg"
@@ -23,17 +31,21 @@ chatbot_icon_path = "assets/chatbot.jpg"
 download_icon_path = "assets/download.jpg"
 
 # Encode icons
-invoice_icon_base64 = img_to_base64(invoice_icon_path)
-chatbot_icon_base64 = img_to_base64(chatbot_icon_path)
-download_icon_base64 = img_to_base64(download_icon_path)
+try:
+    invoice_icon_base64 = img_to_base64(invoice_icon_path)
+    chatbot_icon_base64 = img_to_base64(chatbot_icon_path)
+    download_icon_base64 = img_to_base64(download_icon_path)
+except Exception as e:
+    st.error(f"Erreur lors du chargement des icônes : {e}")
+    st.stop()
 
 st.set_page_config(
     page_title="FactuBot - Upload Invoice",
-    page_icon=invoice_icon_path,
+    page_icon="📄",  # Utilisation d'un emoji pour éviter les problèmes de chemin
     layout="centered"
 )
 
-# Custom CSS for styling
+# Custom CSS for styling (inchangé)
 st.markdown(f"""
 <style>
 .title {{
@@ -209,11 +221,15 @@ if uploaded_file:
 
     # Extract text from image using Pillow and pytesseract
     def extract_text_from_image(image_path):
-        img = Image.open(image_path)
-        text = pytesseract.image_to_string(img, lang='fra+eng')
-        return text
+        try:
+            img = Image.open(image_path)
+            text = pytesseract.image_to_string(img, lang='fra+eng')
+            return text
+        except Exception as e:
+            st.error(f"Erreur lors de l'extraction du texte : {e}")
+            st.stop()
 
-    # Analyze extracted text
+    # Analyze extracted text (inchangé)
     def analyze_text(text):
         nom_match = re.search(r'(Nom|Pour|Client|Commande Pour).*?:\s*(.*)', text)
         nom = nom_match.group(2).strip() if nom_match else "Nom non trouvé"
@@ -263,7 +279,7 @@ if uploaded_file:
             "Prix Total": prix_total,
         }
 
-    # Generate invoice HTML with soft green theme
+    # Generate invoice HTML with soft green theme (inchangé)
     def generate_invoice_html(data):
         return f"""
         <!DOCTYPE html>
@@ -412,6 +428,3 @@ if uploaded_file:
     # Download section with icon and button (single button)
     if st.button("Download Invoice", key="download_invoice"):
         st.switch_page("pages/3_Download.py")
-
-    # Clean up
-    os.unlink(tmp_file_path)
