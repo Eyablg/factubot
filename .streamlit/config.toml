@@ -7,5 +7,12 @@ enableCORS = false
 developmentMode = false
 
 [packageManager]
-systemPackages = ["tesseract-ocr", "libtesseract-dev", "wkhtmltopdf"]
-
+systemPackages = [
+    "tesseract-ocr",
+    "libtesseract-dev",
+    "libleptonica-dev",
+    "tesseract-ocr-fra",
+    "tesseract-ocr-eng",
+    "tesseract-ocr-script-fra",
+    "tesseract-ocr-script-latn"
+]
