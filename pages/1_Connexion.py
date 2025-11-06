@@ -6,9 +6,9 @@ def img_to_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
-# Paths for icons
-factubot_icon_path = r"C:\Users\PC\ML\factubot\icon1.jpg"  # Path for FactuBot icon
-login_icon_path = r"C:\Users\PC\ML\factubot\login1.jpg"  # Path for login icon
+# Paths for icons (chemins relatifs)
+factubot_icon_path = "assets/icon1.jpg"  # Chemin relatif pour l'icône FactuBot
+login_icon_path = "assets/login1.jpg"    # Chemin relatif pour l'icône de login
 
 # Encode the icons in base64
 try:
@@ -68,7 +68,7 @@ st.markdown(
         align-items: center;
         gap: 10px;
         margin-bottom: 20px;
-        margin-top: 30px; /* Added margin to move down the login section */
+        margin-top: 30px;
     }}
     .login-title img {{
         width: 35px;
