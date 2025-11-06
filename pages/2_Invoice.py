@@ -7,19 +7,20 @@ from PIL import Image
 import os
 import base64
 
-# Set the Tesseract path
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Set the Tesseract path (pour Windows local uniquement)
+if os.name == 'nt':  # Si le système est Windows
+    pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files\Tesseract-OCR\tesseract.exe'
+# Sur Streamlit Cloud, Tesseract est installé via config.toml, donc pas besoin de chemin absolu
 
 # Function to encode an image to base64
 def img_to_base64(image_path):
     with open(image_path, "rb") as img_file:
         return base64.b64encode(img_file.read()).decode("utf-8")
 
-# Set paths for icons
-base_path = r"C:\Users\PC\ML\factubot"
-invoice_icon_path = os.path.join(base_path, "invoice.jpg")
-chatbot_icon_path = os.path.join(base_path, "chatbot.jpg")
-download_icon_path = os.path.join(base_path, "download.jpg")
+# Set paths for icons (chemins relatifs)
+invoice_icon_path = "assets/invoice.jpg"
+chatbot_icon_path = "assets/chatbot.jpg"
+download_icon_path = "assets/download.jpg"
 
 # Encode icons
 invoice_icon_base64 = img_to_base64(invoice_icon_path)
@@ -196,10 +197,9 @@ def add_message(role, message):
 
 # Upload image
 uploaded_file = st.file_uploader("Upload an invoice image", type=["png", "jpg", "jpeg"])
-
 if uploaded_file:
     # Display uploaded image
-    st.image(uploaded_file, caption="Uploaded Image", use_container_width=True)
+    st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
     st.success("Image uploaded successfully!")
 
     # Save the uploaded file temporarily
