@@ -1,1 +1,11 @@
+[server]
+headless = true
+port = $PORT
+enableCORS = false
+
+[global]
+developmentMode = false
+
+[packageManager]
+systemPackages = ["tesseract-ocr", "libtesseract-dev", "wkhtmltopdf"]
 
